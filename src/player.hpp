@@ -7,15 +7,14 @@
 #include <optional>
 
 
-template <ConnectSize R, ConnectSize C>
 class Player
 {
 protected:
-	std::optional<Position> random(Board<R, C>& board)
+	std::optional<Position> random(Board& board)
 	{
 		ConnectSize blank_count = 0;
-		for (ConnectSize y = 0; y < R; ++y)
-			for (ConnectSize x = 0; x < C; ++x)
+		for (ConnectSize y = 0; y < board.rows; ++y)
+			for (ConnectSize x = 0; x < board.columns; ++x)
 				blank_count += board.get_state(y, x) == State::BLANK;
 
 		if (!blank_count)
@@ -24,8 +23,8 @@ protected:
 		ConnectSize random_choice = rand() % blank_count;
 		ConnectSize counter = 0;
 
-		for (ConnectSize y = 0; y < R; ++y) {
-			for (ConnectSize x = 0; x < C; ++x) {
+		for (ConnectSize y = 0; y < board.rows; ++y) {
+			for (ConnectSize x = 0; x < board.columns; ++x) {
 				if (board.get_state(y, x) == State::BLANK) {
 					if (counter == random_choice)
 						return Position(y, x);
@@ -38,7 +37,7 @@ protected:
 		return {};
 	}
 
-	std::optional<Position> attack(Board<R, C>& board)
+	std::optional<Position> attack(Board& board)
 	{
 		return {};
 	}
@@ -50,7 +49,7 @@ public:
 		: state(state)
 	{}
 
-	std::optional<Position> position(Board<R, C>& board, Player<R, C> opponent)
+	std::optional<Position> position(Board& board, Player opponent)
 	{
 		auto attack_position = attack(board);
 		if (attack_position.has_value())
@@ -63,9 +62,9 @@ public:
 		return this->random(board);
 	}
 
-	std::optional<Move> move(Board<R, C>& board, Player<R, C> opponent)
+	std::optional<Move> move(Board& board, Player opponent)
 	{
-		auto position = position(board, opponent);
+		auto position = this->position(board, opponent);
 		if (position.has_value())
 			return Move(position.value(), state);
 
@@ -74,15 +73,14 @@ public:
 };
 
 
-template <ConnectSize R, ConnectSize C>
-class Random : public Player<R, C>
+class Random : public Player
 {
 public:
 	Random(State state)
-		: Player<R, C>(state)
+		: Player(state)
 	{}
 
-	std::optional<Position> position(Board<R, C>& board, Player<R, C> opponent)
+	std::optional<Position> position(Board& board, Player opponent)
 	{
 		return this->random(board);
 	}

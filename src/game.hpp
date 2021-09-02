@@ -5,6 +5,7 @@
 #include "position.hpp"
 #include <cstdint>
 #include <iostream>
+#include <vector>
 
 
 enum class State : std::uint8_t
@@ -31,25 +32,27 @@ std::ostream& operator << (std::ostream& os, const State& self)
 
 struct Move
 {
-	ConnectSize row, column;
+	Position position;
 	State state;
 
+	Move(Position position, State state)
+		: position(position), state(state)
+	{}
+
 	Move(ConnectSize row, ConnectSize column, State state)
-		: row(row), column(column), state(state)
+		: position(row, column), state(state)
 	{}
 };
 
-template <ConnectSize ROWS = 7, ConnectSize COLUMNS = 7>
 struct Board
 {
-	ConnectSize rows = ROWS;
-	ConnectSize columns = COLUMNS;
-	State board[ROWS][COLUMNS];
+	ConnectSize rows;
+	ConnectSize columns;
+	std::vector<std::vector<State>> board;
 
-	Board()
-	{
-		reset();
-	}
+	Board(ConnectSize rows, ConnectSize columns)
+		: rows(rows), columns(columns), board(rows, std::vector<State>(columns, State::BLANK))
+	{}
 
 	void reset(State state = State::BLANK)
 	{
@@ -106,6 +109,7 @@ struct Board
 		return State::BLANK;
 	}
 
+	// Temporary
 	void show()
 	{
 		std::cout << "------" << std::endl;

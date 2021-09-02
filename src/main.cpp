@@ -15,11 +15,11 @@ int main(int argc, char **argv)
 	constexpr ConnectSize ROWS = 8;
 	constexpr ConnectSize COLUMNS = 8;
 
-	Board<ROWS, COLUMNS> board;
+	Board board(ROWS, COLUMNS);
 	board.show();
 
-	Player<ROWS, COLUMNS> player(State::CROSS);
-	Random<ROWS, COLUMNS> random(State::CIRCLE);
+	Player player(State::CROSS);
+	Random random(State::CIRCLE);
 
 	for (int chance, time = 0; time < ROWS * COLUMNS; chance = (chance + 1) % 2, ++time) {
 		if (chance & 1) {
